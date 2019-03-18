@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+    <h1>Job Change</h1>
+    <form action="{% url 'jobchange' %}" method="POST">
+        {% csrf_token %}    
+
+        <input type="radio" name="newjob" value="{{ main.id }}" required><p>{{ main.level }}/{{ main.name }}/{{ main.explain }}</p>
+        <hr>
+
+        {% for job in sub %}
+        <input type="radio" name="newjob" value="{{ job.id }}" required><p>{{ job.level }}/{{ job.name }}/{{ job.explain }}</p>
+        <br>
+        {% endfor %}
+
+        <input type="submit" value="申請する">
+        <input type="reset" value="書き直す">
+    </form>
+</body>
+</html>
