@@ -9,6 +9,7 @@ class Player(models.Model):
     #なんか出てくるから保留
     # sns = models.URLField(null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    avatar = models.URLField(max_length=200, blank=True)
 
 
 class Job(models.Model):
