@@ -12,7 +12,7 @@
   <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
 </head>
 
-<body>
+<body class="mdc-typography">
   <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
     <div class="mdc-top-app-bar__row">
       <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
@@ -147,27 +147,58 @@
     <div class="mdc-dialog__container">
       <div class="mdc-dialog__surface">
         <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
-        <h2 class="mdc-dialog__title">
+        <h2 class="mdc-dialog__title" id="d_title">
           <!--
        -->Start Timer
           <!--
      -->
         </h2>
         <div class="mdc-dialog__content">
-          1
+          <h2 class="mdc-typography--headline2" id="num" align="center">0</h2>
         </div>
         <footer class="mdc-dialog__actions">
           <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
             <span class="mdc-button__label">No</span>
           </button>
-          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
-            <span class="mdc-button__label">START</span>
+          <button type="button" class="mdc-button mdc-dialog__button" onclick="log_t()">
+            <span class="mdc-button__label" id="run">START</span>
           </button>
         </footer>
       </div>
     </div>
     <div class="mdc-dialog__scrim"></div>
   </div>
+
+  <div id="send_dialog" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+    aria-describedby="my-dialog-content">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface">
+        <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+        <h2 class="mdc-dialog__title">
+          <!--
+     -->Send Your Task
+          <!--
+   -->
+        </h2>
+        <div class="mdc-dialog__content">
+          Send your task. Are you OK?
+        </div>
+        <footer class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
+            <span class="mdc-button__label">No</span>
+          </button>
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
+            <span class="mdc-button__label">SEND</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+  </div>
+
+  <form>
+    <input type="hidden" name="time" id="hid" value="0">
+  </form>
 
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <script>
@@ -184,8 +215,14 @@
     }
 
     const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
+
     function c() {
       time_dialog.open()
+    }
+
+    const send_dialog = new mdc.dialog.MDCDialog(document.querySelector('#send_dialog'));
+    function d() {
+      send_dialog.open()
     }
 
     const bar = new mdc.topAppBar.MDCTopAppBar(document.querySelector('.mdc-top-app-bar'));
@@ -194,6 +231,7 @@
     mdc.autoInit()
   </script>
   <script type="text/javascript" src="{% static 'main.js' %}"></script>
+  <script type="text/javascript" src="{% static 'sub.js' %}"></script>
 </body>
 
 </html>
