@@ -119,9 +119,12 @@
           <!--
      -->
         </h2>
+        <form name="i_form" id="input_form" action="">
         <div class="mdc-dialog__content" id="my-dialog-content">
           <div class="mdc-text-field">
-            <input type="text" id="my-text-field" class="mdc-text-field__input">
+            <!-- entar 対策 dummy -->
+            <input type="text" name="dummy" style="display:none;">
+            <input name="i_text" type="text" id="my-text-field" class="mdc-text-field__input">
             <label class="mdc-floating-label" for="my-text-field"></label>
             <div class="mdc-line-ripple"></div>
           </div>
@@ -137,6 +140,7 @@
             <span class="mdc-button__label">Yes</span>
           </button>
         </footer>
+        </form>
       </div>
     </div>
     <div class="mdc-dialog__scrim"></div>
@@ -169,6 +173,14 @@
     <div class="mdc-dialog__scrim"></div>
   </div>
 
+  <form action="{% url 'task' %}" method="POST" id="hoge">
+    {% csrf_token %}
+    <input type="hidden" name="time" id="hid" value="0">
+    <input type="hidden" name="what" id="hide_what" value="{{ job.name }} Task" maxlength="30">
+    <input type="hidden" name="submit_token" value="{{ submit_token }}" class="hidemessage">
+    <input type="submit" value="申請する">
+  </form>
+
   <div id="send_dialog" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
     aria-describedby="my-dialog-content">
     <div class="mdc-dialog__container">
@@ -187,7 +199,7 @@
           <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
             <span class="mdc-button__label">No</span>
           </button>
-          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
+          <button type="submit" form="hoge" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
             <span class="mdc-button__label">SEND</span>
           </button>
         </footer>
@@ -195,10 +207,6 @@
     </div>
     <div class="mdc-dialog__scrim"></div>
   </div>
-
-  <form>
-    <input type="hidden" name="time" id="hid" value="0">
-  </form>
 
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <script>
@@ -217,6 +225,13 @@
     const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
 
     function c() {
+      var text = document.forms.i_form.i_text.value
+      if (text.length >= 1){
+        document.getElementById("hide_what").value = text;
+      }else{
+        text = "{{ job.name }}" + " Task";
+        document.getElementById("hide_what").value = text;
+      }
       time_dialog.open()
     }
 

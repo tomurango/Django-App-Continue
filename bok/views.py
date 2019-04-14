@@ -11,7 +11,11 @@ def home(request):
     if Player.objects.filter(user=request.user).exists():
         try:
             main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
-            job_data={'job':main_job,'tasks':Task.objects.all().order_by('-id')}
+            job_data={
+                'job':main_job,
+                'tasks':Task.objects.all().order_by('-id'),
+                'submit_token':uuid.uuid4()
+                }
             return render(request, 'bok/home.html',job_data)
         except:
             return render(request, 'bok/home.html')
@@ -118,11 +122,12 @@ def task(request):
                 skill+=n
                 #skillpointのアップデート
                 Job.objects.filter(player_num=player, main=1).update(skillpoint=skill)
+            return redirect(home)
         #エラー出たら(tokenのuniqueエラーだと思う)
         except:
             #特に保存しない
             a=1
-        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player, main=1),'tasks':Task.objects.all().order_by('-id')})
+            return redirect(home)
     submit_token=uuid.uuid4()
     return render(request,'bok/task.html',{'submit_token':submit_token})
 
@@ -185,6 +190,6 @@ def skill(request):
             new_skill.save()
         except:
             a=1
-        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player, main=1),'tasks':Task.objects.all().order_by('-id')})
+        return redirect(home)
     submit_token=uuid.uuid4()
     return render(request,'bok/skill.html',{'job':main_job,'tasks':Task.objects.all(),'submit_token':submit_token})

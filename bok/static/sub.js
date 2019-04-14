@@ -6,8 +6,6 @@
     hid.value = num ;
 }
 
-
-
 function log_t(){
     var text=document.getElementById('run')
     var title=document.getElementById('d_title')
