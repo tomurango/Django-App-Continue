@@ -81,11 +81,6 @@
               <p>Lv{{ job.level }}/職業:{{ job.name }} / 説明:{{job.explain}}</p>
               <p>Skill Point {{ job.skillpoint }}pt</p>
             </div>
-
-            <br>
-
-            <a href="{% url 'task' %}">task の記録</a>
-
           </div>
         </div>
 
@@ -209,42 +204,6 @@
   </div>
 
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-  <script>
-    const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-
-    function a() {
-      menu.open = true;
-    }
-    const fabRipple = new mdc.ripple.MDCRipple(document.querySelector('.mdc-fab'));
-    const dialog = new mdc.dialog.MDCDialog(document.querySelector('#input_dialog'));
-
-    function b() {
-      dialog.open()
-    }
-
-    const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
-
-    function c() {
-      var text = document.forms.i_form.i_text.value
-      if (text.length >= 1){
-        document.getElementById("hide_what").value = text;
-      }else{
-        text = "{{ job.name }}" + " Task";
-        document.getElementById("hide_what").value = text;
-      }
-      time_dialog.open()
-    }
-
-    const send_dialog = new mdc.dialog.MDCDialog(document.querySelector('#send_dialog'));
-    function d() {
-      send_dialog.open()
-    }
-
-    const bar = new mdc.topAppBar.MDCTopAppBar(document.querySelector('.mdc-top-app-bar'));
-
-
-    mdc.autoInit()
-  </script>
   <script type="text/javascript" src="{% static 'main.js' %}"></script>
   <script type="text/javascript" src="{% static 'sub.js' %}"></script>
 </body>
