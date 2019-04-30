@@ -7,63 +7,204 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'main.css' %}" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
 </head>
 
-<body>
-    <header>サンプルページ</header>
-    <div class="dummy"></div>
+<body class="mdc-typography">
+  <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
+    <div class="mdc-top-app-bar__row">
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+        <div id="demo-menu" class="mdc-menu-surface--anchor">
+          <button id="menu-button" class="material-icons mdc-top-app-bar__navigation-icon" onclick="a()">menu</button>
+          <div class="mdc-menu mdc-menu-surface" tabindex="-1">
+            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'job' %}">職業を新たに作る</a>
+                </span>
+              </li>
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'jobchange' %}">過去の職業から選ぶ</a>
+                </span>
+              </li>
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'jobname' %}">職業の名前を変える</a>
+                </span>
+              </li>
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'skill' %}">Skill Point　を割り振る</a>
+                </span>
+              </li>
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'signup' %}">名前を変える</a>
+                </span>
+              </li>
+              <li class="mdc-list-item" role="menuitem">
+                <span class="mdc-list-item__text">
+                  <a href="{% url 'logout' %}">logout</a>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <span class="mdc-top-app-bar__title">Title</span>
+      </section>
 
-  <div class="maindata">
-    <div class="dummy">
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+        <a href="#" class="material-icons mdc-top-app-bar__action-item" aria-label="Download"
+          alt="Download">file_download</a>
+        <a href="#" class="material-icons mdc-top-app-bar__action-item" aria-label="Print this page"
+          alt="Print this page">print</a>
+        <a href="#" class="material-icons mdc-top-app-bar__action-item" aria-label="Bookmark this page"
+          alt="Bookmark this page">bookmark</a>
+      </section>
     </div>
-    <div class="card">
-      {% if user.is_authenticated %}
-      <p>Hi {{ user.username }}!</p>
+  </header>
 
-      <!-- いるとき -->
-      {% if user.player.name %}
-      <p>ニックネーム {{ user.player.name }}</p>
+  <main>
+    <div class="mdc-layout-grid">
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-layout-grid__cell">
+          <div class="mdc-card  card">
+            <div class="up">
+              <img src="{{ user.player.avatar }}" class="avatar">
+              <p class="name">{{ user.player.name }}</p>
+            </div>
 
-      <!-- 無職の時 -->
-      {% if job.player.user.name == "無職" %}
+            <div class="job">
+              <p>Lv{{ job.level }}/職業:{{ job.name }} / 説明:{{job.explain}}</p>
+              <p>Skill Point {{ job.skillpoint }}pt</p>
+            </div>
+          </div>
+        </div>
 
-      <p>Lv{{ job.level }}/職業:{{ job.name }} / 説明:{{job.explain}}</p>
-      <a href="{% url 'job' %}">職業を決める</a>
+        <div class="mdc-layout-grid__cell">
+          {% for task in tasks %}
+          <div class="mdc-layout-grid__cell mdc-card mdc-elevation--z1 mdc-elevation-transition taskcard">
+            <div class="mdc-card__primary-action content" tabindex="0">
+              <p>{{ task.what }}</p>
+            </div>
+            <p class="content">{{ task.Job_num.name }}</p>
+          </div>
+          {% endfor %}
 
-      {% else %}
-      <p>Lv{{ job.level }}/職業:{{ job.name }} / 説明:{{job.explain}}</p>
-      <p>Skill Point {{ job.skillpoint }}pt</p>
-
-      <a href="{% url 'task' %}">taskの記録</a>
-      <br>
-      <br>
-      <a href="{% url 'job' %}">職業を新たに作る</a>
-      <a href="{% url 'jobchange' %}">過去の職業から選ぶ</a>
-      <a href="{% url 'jobname' %}">職業の名前を変える</a>
-      <br>
-      <a href="{% url 'skill' %}">Skill Point　を割り振る</a>
-      {% endif %}
-
-      <a href="{% url 'signup' %}">名前を変える</a>
-
-      {% else %}
-      <!-- user の player がいないとき-->
-      <a href="{% url 'signup' %}">冒険をはじめる</a>
-
-      {% endif %}
-
-      <a href="{% url 'logout' %}">logout</a>
-      {% else %}
-      <p>You are not logged in.</p>
-      <p><a href="{% url 'login' %}">login</a></p>
-      {% endif %}
+        </div>
       </div>
-  </div><div class="taskline">
-      {% for skill in skills %}<div class="taskcard"><p>{{ skill.name }}</p></div>
-      {% endfor %}
-      <div class="taskcard">ororor</div>
+    </div>
+  </main>
+
+  <button class="mdc-fab mdc-elevation--z5 fabb" aria-label="Favorite" onclick="b()">
+    <span class="mdc-fab__icon material-icons">timer</span>
+  </button>
+
+  <div id="input_dialog" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+    aria-describedby="my-dialog-content">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface">
+        <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+        <h2 class="mdc-dialog__title" id="my-dialog-title">
+          <!--
+       -->Write Your Task Here
+          <!--
+     -->
+        </h2>
+        <form name="i_form" id="input_form" action="">
+        <div class="mdc-dialog__content" id="my-dialog-content">
+          <div class="mdc-text-field">
+            <!-- entar 対策 dummy -->
+            <input type="text" name="dummy" style="display:none;">
+            <input name="i_text" type="text" id="my-text-field" class="mdc-text-field__input">
+            <label class="mdc-floating-label" for="my-text-field"></label>
+            <div class="mdc-line-ripple"></div>
+          </div>
+          <div class="mdc-text-field-helper-line">
+            <div class="mdc-text-field-helper-text">helper text</div>
+          </div>
+        </div>
+        <footer class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
+            <span class="mdc-button__label">No</span>
+          </button>
+          <button type="button" class="mdc-button mdc-dialog__button" onclick="c()">
+            <span class="mdc-button__label">Yes</span>
+          </button>
+        </footer>
+        </form>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
   </div>
-  <a href="{% url 'task' %}" class="task"><i>+</i></a>
+
+  <div id="time_dialog" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+    aria-describedby="my-dialog-content">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface">
+        <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+        <h2 class="mdc-dialog__title" id="d_title">
+          <!--
+       -->Start Timer
+          <!--
+     -->
+        </h2>
+        <div class="mdc-dialog__content">
+          <h2 class="mdc-typography--headline2" id="num" align="center">0</h2>
+        </div>
+        <footer class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
+            <span class="mdc-button__label">No</span>
+          </button>
+          <button type="button" class="mdc-button mdc-dialog__button" onclick="log_t()">
+            <span class="mdc-button__label" id="run">START</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+  </div>
+
+  <form action="{% url 'task' %}" method="POST" id="hoge">
+    {% csrf_token %}
+    <input type="hidden" name="time" id="hid" value="0">
+    <input type="hidden" name="what" id="hide_what" value="{{ job.name }} Task" maxlength="30">
+    <input type="hidden" name="submit_token" value="{{ submit_token }}" class="hidemessage">
+  </form>
+
+  <div id="send_dialog" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+    aria-describedby="my-dialog-content">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface">
+        <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+        <h2 class="mdc-dialog__title">
+          <!--
+     -->Send Your Task
+          <!--
+   -->
+        </h2>
+        <div class="mdc-dialog__content">
+          Send your task. Are you OK?
+        </div>
+        <footer class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
+            <span class="mdc-button__label">No</span>
+          </button>
+          <button type="submit" form="hoge" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="yes">
+            <span class="mdc-button__label">SEND</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+  </div>
+
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <script type="text/javascript" src="{% static 'main.js' %}"></script>
+  <script type="text/javascript" src="{% static 'sub.js' %}"></script>
 </body>
+
 </html>

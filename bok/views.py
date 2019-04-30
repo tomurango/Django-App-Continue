@@ -6,14 +6,16 @@ from django.contrib.auth.models import User
 import uuid
 
 # Create your views here.
+@login_required
 def home(request):
-    if request.user.is_anonymous:
-        #なんか書いとけ
-        return render(request, 'bok/home.html')
     if Player.objects.filter(user=request.user).exists():
         try:
             main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
-            job_data={'job':main_job,'skills':Skill.objects.filter(Job_num=main_job)}
+            job_data={
+                'job':main_job,
+                'tasks':Task.objects.all().order_by('-id'),
+                'submit_token':uuid.uuid4()
+                }
             return render(request, 'bok/home.html',job_data)
         except:
             return render(request, 'bok/home.html')
@@ -41,13 +43,14 @@ def sign_up(request):
             job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
 
         #申請する処理
+        #pipelineの実装でいらなくなったかも
         else:
             data=Player(name=namer,user=request.user)
             data.save()
             fjob=Job(name="無職",explain="文字通りの無職",player_num_id=data.id)
             fjob.save()
-            return render(request, 'bok/home.html',{'job':fjob,'skills':Skill.objects.filter(Job_num=fjob)})
-        return render(request, 'bok/home.html',{'job':job,'skills':Skill.objects.filter(Job_num=job)})
+            return render(request, 'bok/home.html',{'job':fjob,'tasks':Task.objects.all().order_by('-id')})
+        return render(request, 'bok/home.html',{'job':job,'tasks':Task.objects.all().order_by('-id')})
     else:
         #冒険をはじめるめる処理
         return render(request, 'bok/signup.html')
@@ -67,16 +70,16 @@ def job_des(request):
         try:
             new.save()
             main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
-            job_data={'job':main_job,'skills':Skill.objects.filter(Job_num=main_job)}
+            job_data={'job':main_job,'tasks':Task.objects.all().order_by('-id')}
             return render(request,'bok/home.html',job_data)
         except:
             main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
-            job_data={'job':main_job,'skills':Skill.objects.filter(Job_num=main_job)}
+            job_data={'job':main_job,'tasks':Task.objects.all().order_by('-id')}
             return render(request,'bok/home.html',job_data)
     
     main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
     submit_token=uuid.uuid4()
-    job_data={'job':main_job,'submit_token':submit_token,'skills':Skill.objects.filter(Job_num=main_job)}
+    job_data={'job':main_job,'submit_token':submit_token,'tasks':Task.objects.all().order_by('-id')}
     return render(request, 'bok/job.html',job_data)
 
 @login_required
@@ -119,11 +122,12 @@ def task(request):
                 skill+=n
                 #skillpointのアップデート
                 Job.objects.filter(player_num=player, main=1).update(skillpoint=skill)
+            return redirect(home)
         #エラー出たら(tokenのuniqueエラーだと思う)
         except:
             #特に保存しない
             a=1
-        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player, main=1),'skills':Skill.objects.filter(Job_num=Job.objects.get(player_num=player, main=1))})
+            return redirect(home)
     submit_token=uuid.uuid4()
     return render(request,'bok/task.html',{'submit_token':submit_token})
 
@@ -139,7 +143,7 @@ def job_name(request):
         Job.objects.filter(player_num=player, main=1).update(name=name,explain=expl)
         #jobのデータをhomeにわたす
         main_job=Job.objects.get(player_num=Player.objects.get(user=request.user), main=1)
-        job_data={'job':main_job,'skills':Skill.objects.filter(Job_num=main_job)}
+        job_data={'job':main_job,'tasks':Task.objects.all().order_by('-id')}
         return render(request,'bok/home.html',job_data)
     return render(request,'bok/jobname.html')
 
@@ -154,7 +158,7 @@ def job_change(request):
         Job.objects.filter(player_num=player,main=1).update(main=0)
         #homeに新しいmainjobの情報を流す
         Job.objects.filter(player_num=player,id=int(request.POST['newjob'])).update(main=1)
-        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player,main=1),'skills':Skill.objects.filter(Job_num=Job.objects.get(player_num=player,main=1))})
+        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player,main=1),'tasks':Task.objects.all()})
     your_jobs=Job.objects.filter(player_num=player,main=0)
     job_dict={
         'main':main_job,
@@ -170,7 +174,7 @@ def skill(request):
     main_job=Job.objects.get(player_num=player, main=1)
     #Skill Pointが0の時、お断りの処理
     if main_job.skillpoint == 0:
-        return render(request,'bok/home.html',{'job':main_job,'skills':Skill.objects.filter(Job_num=main_job)})
+        return render(request,'bok/home.html',{'job':main_job,'tasks':Task.objects.all().order_by('-id')})
     #POSTの時
     if request.method == "POST":
         #jobのアップデート
@@ -186,6 +190,6 @@ def skill(request):
             new_skill.save()
         except:
             a=1
-        return render(request,'bok/home.html',{'job':Job.objects.get(player_num=player, main=1),'skills':Skill.objects.filter(Job_num=main_job)})
+        return redirect(home)
     submit_token=uuid.uuid4()
-    return render(request,'bok/skill.html',{'job':main_job,'skills':Skill.objects.filter(Job_num=main_job),'submit_token':submit_token})
+    return render(request,'bok/skill.html',{'job':main_job,'tasks':Task.objects.all(),'submit_token':submit_token})
