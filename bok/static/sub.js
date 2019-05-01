@@ -6,9 +6,6 @@
     hid.value = num;
 }
 
-function stop(){
-    clearInterval
-}
 
 function log_t() {
     var text = document.getElementById('run');
@@ -45,15 +42,46 @@ dialog.listen('MDCDialog:closing', function () {
     document.forms.i_form.i_text.value="";
 });
 
-const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
-time_dialog.listen('MDCDialog:closing', function() {
-    var text = document.getElementById('run');
-    var title = document.getElementById('d_title');
-    text.textContent = 'START';
-    title.textContent = 'Start Timer';
-    clearInterval(timer);
+const alert_dialog = new mdc.dialog.MDCDialog(document.querySelector('#alert_dialog'));
+alert_dialog.listen('MDCDialog:closing', function(){
 });
 
+const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
+time_dialog.listen('MDCDialog:closing', function() {
+    var number = document.getElementById('hid').value;
+    if(number > 0){
+        var text = document.getElementById('run');
+        var title = document.getElementById('d_title');
+        text.textContent = 'START';
+        title.textContent = 'Start Timer';
+        clearInterval(timer);
+        alert_dialog.open();
+    }else{
+        try{
+            var text = document.getElementById('run');
+            var title = document.getElementById('d_title');
+            text.textContent = 'START';
+            title.textContent = 'Start Timer';
+            clearInterval(timer);
+        }catch{
+            console.log('インターバル設定してないエラーだよ！');
+        }
+    }
+});
+
+function dont_delete() {
+    alert_dialog.close();
+    time_dialog.open();
+}
+
+function delete_data() {
+    var number = document.getElementById('num');
+    number.textContent = 0;
+    var hid = document.getElementById("hid");
+    hid.value = 0;
+    alert_dialog.close();
+    dialog.close();
+}
 
 var defau = document.getElementById("hide_what").value;
 
