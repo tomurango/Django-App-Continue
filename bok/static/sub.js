@@ -11,8 +11,8 @@ function log_t() {
     var text = document.getElementById('run');
     var title = document.getElementById('d_title');
     if (text.textContent == 'START') {
-        text.textContent = 'STOP';
-        title.textContent = 'Stop Timer';
+        text.textContent = 'Finish';
+        title.textContent = 'Finish Task';
         timer = setInterval(count_n, 1000);
     } else {
         text.textContent = 'START';
@@ -43,8 +43,6 @@ dialog.listen('MDCDialog:closing', function () {
 });
 
 const alert_dialog = new mdc.dialog.MDCDialog(document.querySelector('#alert_dialog'));
-alert_dialog.listen('MDCDialog:closing', function(){
-});
 
 const time_dialog = new mdc.dialog.MDCDialog(document.querySelector('#time_dialog'));
 time_dialog.listen('MDCDialog:closing', function() {
@@ -69,6 +67,10 @@ time_dialog.listen('MDCDialog:closing', function() {
     }
 });
 
+alert_dialog.listen('MDCDialog:closing', function(){ 
+    time_dialog.open();
+});
+
 function dont_delete() {
     alert_dialog.close();
     time_dialog.open();
@@ -81,6 +83,7 @@ function delete_data() {
     hid.value = 0;
     alert_dialog.close();
     dialog.close();
+    time_dialog.close();
 }
 
 var defau = document.getElementById("hide_what").value;
